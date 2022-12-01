@@ -27,11 +27,23 @@
    lines
   ))
 
-(: q1 (-> (Listof String) Calories))
-(define (q1 [lines : (Listof String)])
+(: q1-part1 (-> (Listof String) Calories))
+(define (q1-part1 [lines : (Listof String)])
   (apply
    max
    (group-calories
     (parse-input lines))))
 
-(q1 (file->lines "input/day1.txt"))
+(: q1-part2 (-> (Listof String) Calories))
+(define (q1-part2 [lines : (Listof String)])
+   (apply
+    +
+    (take
+     (sort
+      (group-calories
+       (parse-input lines))
+      >)
+     3)))
+
+(q1-part1 (file->lines "input/day1.txt"))
+(q1-part2 (file->lines "input/day1.txt"))
