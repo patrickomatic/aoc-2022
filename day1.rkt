@@ -47,3 +47,6 @@
 
 (q1-part1 (file->lines "input/day1.txt"))
 (q1-part2 (file->lines "input/day1.txt"))
+
+(provide group-calories
+         parse-input)
