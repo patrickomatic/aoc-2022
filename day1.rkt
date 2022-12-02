@@ -10,43 +10,40 @@
    (λ ([v : ParsedEntry] [current : (Listof Calories)])
      (if (eq? v 'Separator)
          (cons 0 current)
-         (cons (+ v (car current)) (cdr current))
-         ))
+         (cons (+ v (car current)) (cdr current))))
    '(0)
-   entries
-   ))
+   entries))
    
 (: parse-input (-> (Listof String) (Listof ParsedEntry)))
 (define (parse-input lines)
   (map
    (λ ([s : String])
      (let ([parsed-number (string->number s 10)])
-       (if (eq? #f parsed-number)
-           'Separator
-           (real-part parsed-number))))
-   lines
-  ))
+       (if parsed-number
+           (real-part parsed-number)
+           'Separator)))
+   lines))
+
+(: rank-calories (-> (Listof String) (Listof Real)))
+(define (rank-calories lines)
+  (sort
+    (group-calories (parse-input lines)) 
+    >))
 
 (: q1-part1 (-> (Listof String) Calories))
 (define (q1-part1 [lines : (Listof String)])
-  (apply
-   max
-   (group-calories
-    (parse-input lines))))
-
+  (first (rank-calories lines)))
+   
 (: q1-part2 (-> (Listof String) Calories))
 (define (q1-part2 [lines : (Listof String)])
    (apply
     +
     (take
-     (sort
-      (group-calories
-       (parse-input lines))
-      >)
+     (rank-calories lines)
      3)))
 
 (q1-part1 (file->lines "input/day1.txt"))
 (q1-part2 (file->lines "input/day1.txt"))
 
-(provide group-calories
-         parse-input)
+(provide group-calories parse-input rank-calories)
+
