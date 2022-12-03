@@ -1,11 +1,11 @@
-all: day2
+DAYS := day1 day2 day3
 
-day2:
-	racket day2.rkt
+all: $(DAYS)
 
-day1:
-	racket day1.rkt
+%: %.rkt
+	(test -f $@-test.rkt && raco test $@-test.rkt) || exit 0
+	raco exe $@.rkt
 
-.PHONY: test
-test: 
-	raco test *-test.rkt
+.PHONY: clean
+clean: 
+	rm -rf compiled/ $(DAYS)
