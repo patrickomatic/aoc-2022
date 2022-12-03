@@ -3,7 +3,7 @@ DAYS := day1 day2 day3
 all: $(DAYS)
 
 %: %.rkt
-	(test -f $@-test.rkt && raco test $@-test.rkt) || exit 0
+	raco test $@-test.rkt
 	raco exe $@.rkt
 
 .PHONY: clean

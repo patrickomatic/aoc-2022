@@ -119,3 +119,5 @@
 (let ([strategies (load-strategies "input/day2.txt" )])
   (printf "Question 2/Part 1: ~a\n" (q2-part1 strategies))
   (printf "Question 2/Part 2: ~a\n" (q2-part2 strategies)))
+
+(provide score-for-choice)
