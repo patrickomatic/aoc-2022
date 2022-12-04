@@ -1,2 +1,2 @@
 compiled/
-day*
+day[0-9]

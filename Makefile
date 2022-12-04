@@ -1,4 +1,4 @@
-DAYS := day1 day2 day3
+DAYS := $(patsubst %.rkt,%,$(wildcard day[0-9].rkt))
 
 all: $(DAYS)
 
