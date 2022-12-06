@@ -10,10 +10,11 @@
 (define stack-regexp 
   (const #px"^(?:\\[(\\w)\\]|(\\s\\s\\s))\\s+(?:\\[(\\w)\\]|(\\s\\s\\s))\\s+(?:\\[(\\w)\\]|(\\s\\s\\s))\\s+(?:\\[(\\w)\\]|(\\s\\s\\s))\\s+(?:\\[(\\w)\\]|(\\s\\s\\s))\\s+(?:\\[(\\w)\\]|(\\s\\s\\s))\\s+(?:\\[(\\w)\\]|(\\s\\s\\s))\\s+(?:\\[(\\w)\\]|(\\s\\s\\s))\\s+(?:\\[(\\w)\\]|(\\s\\s\\s))$"))
 
-(define (parse-stacks lines) (let* ([stacks (make-vector 9 '())]
-         [matched-lines (map (curry filter-map identity)
-                             (map cdr
-                                  (filter-map (curry regexp-match (stack-regexp)) lines)))])
+(define (parse-stacks lines)
+  (let ([stacks (make-vector 9 '())]
+        [matched-lines (map (curry filter-map identity)
+                            (map cdr
+                                 (filter-map (curry regexp-match (stack-regexp)) lines)))])
     (for/list ([matched-line matched-lines])
               (for/list ([(e i) (in-indexed matched-line)])
                         (or (equal? e "   ")
@@ -27,30 +28,34 @@
 
 (define (stack-index i) (- i 1))
 
-(define (move-crate! stacks from to)
+(define (move-crates! stacks from to amount)
   (let* ([from-index (stack-index from)]
          [from (vector-ref stacks from-index)]
          [to-index (stack-index to)]
          [to (vector-ref stacks to-index)])
     (or (empty? from)
         (begin
-          (vector-set! stacks to-index (append to (list (last from))))
-          (vector-set! stacks from-index (drop-right from 1))))))
+          (vector-set! stacks to-index (append to (take-right from amount)))
+          (vector-set! stacks from-index (drop-right from (min (length from) amount)))))))
 
-(define (run-commands! stacks commands)
+(define (run-commands! stacks commands strategy)
   (for/list ([command commands])
-            (for/list ([i (range (command-amount command))])
-                      (move-crate! stacks (command-from command) (command-to command)))))
+            (let ([amount (command-amount command)]
+                  [to (command-to command)]
+                  [from (command-from command)])
+              (if (eq? strategy 'one-at-a-time)
+                (for/list ([i (range amount)]) (move-crates! stacks from to 1))
+                (move-crates! stacks from to amount)))))
 
-(define (q1-part1 stacks commands)
+(define (q5 stacks commands strategy)
   (begin
-    (run-commands! stacks commands)
+    (run-commands! stacks commands strategy)
     (string-join (vector->list (vector-map last (vector-filter-not empty? stacks))) "")))
 
 (let* ([filename "input/day5.txt"]
        [lines (file->lines filename)]
-       [commands (parse-commands lines)]
-       [stacks (parse-stacks lines)])
-  (printf "Question 5/Part 1: ~s\n" (q1-part1 stacks commands)))
+       [commands (parse-commands lines)])
+  (printf "Question 5/Part 1: ~s\n" (q5 (parse-stacks lines) commands 'one-at-a-time))
+  (printf "Question 5/Part 2: ~s\n" (q5 (parse-stacks lines) commands 'multiple)))
 
 (provide command parse-commands)
