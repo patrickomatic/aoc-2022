@@ -1,6 +1,6 @@
 #lang racket
 
-(require rackunit "shared.rkt")
+(require "shared.rkt")
 
 (struct command (name argument output) #:transparent)
 
