@@ -37,6 +37,9 @@
 (define (relieved item)
   (floor (/ item 3)))
 
+(define (relieved-v2 mod-amount item)
+  (modulo item mod-amount))
+
 (define (throw-to-monkey item from-monkey-id to-monkey-id monkeys)
   (let* ([from (list-ref monkeys from-monkey-id)]
          [from-items (monkey-items from)]
@@ -52,9 +55,9 @@
                                          [items (append to-items (list item))]))])
          updated-monkeys))
 
-(define (inspect-and-throw-items m monkeys)
+(define (inspect-and-throw-items m monkeys relief-fn)
   (foldl (λ (item updated-monkeys)
-            (let* ([inspected-item (relieved (inspect-item m item))])
+            (let* ([inspected-item (relief-fn (inspect-item m item))])
               (throw-to-monkey inspected-item
                                (monkey-id m)
                                (if (monkey-test? m inspected-item)
@@ -64,28 +67,36 @@
          monkeys
          (monkey-items m)))
 
-(define (take-each-turn monkeys [monkey-id 0])
+(define (take-each-turn monkeys relief-fn [monkey-id 0])
   (if (= monkey-id (length monkeys))
     monkeys
     (take-each-turn 
-      (inspect-and-throw-items (list-ref monkeys monkey-id) monkeys)
+      (inspect-and-throw-items (list-ref monkeys monkey-id) monkeys relief-fn)
+      relief-fn
       (add1 monkey-id))))
 
-(define (take-turns monkeys [rounds 20])
+(define (take-turns monkeys rounds relief-fn)
   (if (zero? rounds)
     monkeys
-    (take-turns (take-each-turn monkeys) (sub1 rounds))))
+    (take-turns (take-each-turn monkeys relief-fn)
+                (sub1 rounds)
+                relief-fn)))
 
-(define (q11 monkeys)
+(define (q11 monkeys rounds relief-fn)
   (apply * 
          (map monkey-inspect-count 
               (take 
-                (sort (take-turns monkeys) > #:key monkey-inspect-count) 
+                (sort 
+                  (take-turns monkeys rounds relief-fn) 
+                  > 
+                  #:key monkey-inspect-count) 
                 2))))
 
 (let* ([aoc-session (find-session)]
        [input (fetch-aoc-input aoc-session 2022 11 #:cache #t)]
-       [monkeys (load-monkeys input)])
-  (printf "Question 11/Part 1: ~s\n" (q11 monkeys)))
+       [monkeys (load-monkeys input)]
+       [common-divisor (apply * (map monkey-test monkeys))])
+  (printf "Question 11/Part 1: ~s\n" (q11 monkeys 20 relieved))
+  (printf "Question 11/Part 2: ~s\n" (q11 monkeys 10000 (curry relieved-v2 common-divisor))))
 
-(provide inspect-and-throw-items load-monkeys monkey monkey-test? take-turns throw-to-monkey)
+(provide inspect-and-throw-items load-monkeys monkey monkey-test? relieved take-turns throw-to-monkey)

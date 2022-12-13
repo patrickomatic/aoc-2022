@@ -8,7 +8,7 @@
                            (monkey 3 '(74) "old + 3" 17 0 1 0)))
 
 (test-case "inspect-and-throw-items"
-           (check-equal? (inspect-and-throw-items (car test-monkeys) test-monkeys)
+           (check-equal? (inspect-and-throw-items (car test-monkeys) test-monkeys relieved)
                          (list (monkey 0 '() "old * 19" 23 2 3 2)
                                (monkey 1 '(54 65 75 74) "old + 6" 19 2 0 0)
                                (monkey 2 '(79 60 97) "old * old" 13 1 3 0)
@@ -32,8 +32,8 @@
                                (monkey 2 '(79 60 97) "old * old" 13 1 3 0)
                                (monkey 3 '() "old + 3" 17 0 1 1))))
 
-(test-case "take-turns"
-           (check-equal? (take-turns test-monkeys) 
+(test-case "take-turn"
+           (check-equal? (take-turns test-monkeys 20 relieved)
                          (list
                             (monkey 0 '(10 12 14 26 34) "old * 19" 23 2 3 101)
                             (monkey 1 '(245 93 53 199 115) "old + 6" 19 2 0 95)
