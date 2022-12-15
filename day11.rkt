@@ -44,16 +44,15 @@
   (let* ([from (list-ref monkeys from-monkey-id)]
          [from-items (monkey-items from)]
          [to (list-ref monkeys to-monkey-id)]
-         [to-items (monkey-items to)]
-         [updated-monkeys (list-set 
-                            (list-set monkeys from-monkey-id
-                                      (struct-copy monkey from
-                                                   [items (cdr from-items)]
-                                                   [inspect-count (add1 (monkey-inspect-count from))]))
-                            to-monkey-id
-                            (struct-copy monkey to
-                                         [items (append to-items (list item))]))])
-         updated-monkeys))
+         [to-items (monkey-items to)])
+         (list-set 
+           (list-set monkeys from-monkey-id
+                     (struct-copy monkey from
+                                  [items (cdr from-items)]
+                                  [inspect-count (add1 (monkey-inspect-count from))]))
+           to-monkey-id
+           (struct-copy monkey to
+                        [items (append to-items (list item))]))))
 
 (define (inspect-and-throw-items m monkeys relief-fn)
   (foldl (λ (item updated-monkeys)
