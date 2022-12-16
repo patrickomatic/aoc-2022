@@ -8,7 +8,7 @@
         [(define (write-proc r o o-mode)
            (let* ([knots (rope-knots r)]
                   [grid-size (max 6 (add1 (apply max (flatten knots))))]
-                  [grid (make-vector grid-size (make-vector grid-size "."))])
+                  [grid (make-grid grid-size ".")])
              (display-grid grid o o-mode (λ (p v)
                                             (let ([knot-pos (index-of knots p)])
                                               (cond
