@@ -2,7 +2,7 @@ DAYS := $(patsubst %.rkt,%,$(wildcard day[1-9].rkt)) $(patsubst %.rkt,%,$(wildca
 
 all: $(DAYS)
 
-%: %.rkt %-test.rkt
+%: %.rkt %-test.rkt shared.rkt
 	raco test $@-test.rkt
 	raco exe $@.rkt
 

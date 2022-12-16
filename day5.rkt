@@ -1,5 +1,4 @@
 #lang racket
-
 (require "shared.rkt")
 
 (struct command (amount from to))

@@ -1,28 +1,22 @@
 #lang racket
-
 (require advent-of-code)
+(require "shared.rkt")
 
 (define start-marker #\S)
 (define end-marker #\E)
 (define end-marker-elevation (add1 (char->integer #\z)))
 
 (define (ec h p)
-  (vector-ref (vector-ref (heightmap-elevations h) (cdr p)) (car p)))
+  (grid-ref (heightmap-elevations h) p))
 
 (struct heightmap (start end elevations shortest-path) 
         #:transparent
         #:methods gen:custom-write
         [(define (write-proc h o o-mode)
-           (let ([elevations (heightmap-elevations h)])
-             (display "\n" o)
-             (for ([y (vector-length elevations)])
-                  (for ([x (vector-length (vector-ref elevations 0))])
-                       (let ([p (cons x y)]
-                             [shortest-path (heightmap-shortest-path h)])
-                         (display 
-                           (if (member p shortest-path) "." (ec h (cons x y)))
-                           o)))
-                  (display "\n" o))))])
+           (let ([elevations (heightmap-elevations h)]
+                 [shortest-path (heightmap-shortest-path h)])
+             (display-grid 
+               elevations o o-mode (λ (p v) (if (member p shortest-path) "." (string v))))))])
 
 (define (elevation h p)
   (let ([c (ec h p)])
@@ -61,12 +55,10 @@
 
 (define (within-bounds? h p)
   (let* ([elevations (heightmap-elevations h)]
-         [x (car p)]
-         [y (cdr p)]
-         [grid-height (vector-length elevations)]
-         [grid-width (vector-length (vector-ref elevations 0))])
+         [x (car p)] [y (cdr p)])
     (and (>= x 0) (>= y 0)
-         (< x grid-width) (< y grid-height))))
+         (< x (grid-width elevations))
+         (< y (grid-height elevations)))))
 
 (define (get-adjacent-steps h p)
   (let ([x (car p)] [y (cdr p)])
@@ -106,10 +98,10 @@
 (define (q12-part2 h)
   (let* ([elevations (heightmap-elevations h)]
          [all-low-points (filter identity (apply append
-                                (for/list ([y (vector-length elevations)])
-                                          (for/list ([x (vector-length (vector-ref elevations 0))])
-                                                    (let ([p (cons x y)])
-                                                      (if (eq? (ec h p) #\a) p #f))))))]
+                                                 (for/list ([y (grid-height elevations)])
+                                                           (for/list ([x (grid-width elevations)])
+                                                                     (let ([p (cons x y)])
+                                                                       (if (eq? (ec h p) #\a) p #f))))))]
          [all-searches (filter identity (map (curry bfs h) all-low-points))])
     (first (sort (map heightmap-shortest-path all-searches) < #:key length))))
 

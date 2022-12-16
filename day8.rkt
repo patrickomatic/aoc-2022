@@ -34,8 +34,8 @@
                         #:fy [fy identity])
   (cond 
     [(finished? x y) count]
-    [(>= (tree-height grid (fx x) (fy y)) height) (++ count)]
-    [else (look-out-count grid (fx x) (fy y) height (++ count)
+    [(>= (tree-height grid (fx x) (fy y)) height) (add1 count)]
+    [else (look-out-count grid (fx x) (fy y) height (add1 count)
                           #:finished? finished? #:fx fx #:fy fy)]))
 
 (define (viewing-distance grid x y direction look-out-fn)
@@ -44,10 +44,10 @@
          [x= (λ (c) (λ (a b) (= a c)))]
          [y= (λ (c) (λ (a b) (= b c)))])
     (match direction
-           ['up (look #:fy -- #:finished? (y= 0))]
-           ['down (look #:fy ++ #:finished? (y= (-- (grid-height grid))))]
-           ['left (look #:fx -- #:finished? (x= 0))]
-           ['right (look #:fx ++ #:finished? (x= (-- (grid-width grid))))])))
+           ['up (look #:fy sub1 #:finished? (y= 0))]
+           ['down (look #:fy add1 #:finished? (y= (sub1 (grid-height grid))))]
+           ['left (look #:fx sub1 #:finished? (x= 0))]
+           ['right (look #:fx add1 #:finished? (x= (sub1 (grid-width grid))))])))
 
 (define (tree-is-visible? grid x y)
   (ormap (λ (direction) (not (viewing-distance grid x y direction look-out-boolean)))

@@ -1,5 +1,4 @@
 #lang racket
-
 (require advent-of-code)
 (require "shared.rkt")
 
@@ -8,17 +7,14 @@
         #:methods gen:custom-write
         [(define (write-proc r o o-mode)
            (let* ([knots (rope-knots r)]
-                  [grid-size (max 6 (add1 (apply max (flatten knots))))])
-             (for ([y (range grid-size)])
-                  (for ([x (range grid-size)])
-                       (let* ([current-pos (cons x y)]
-                              [knot-pos (index-of knots current-pos)])
-                         (display (cond 
-                                    [(equal? knot-pos 0) "H"]
-                                    [(not (eq? #f knot-pos)) (number->string knot-pos)]
-                                    [else "."]) 
-                                  o)))
-                  (fprintf o "\n"))))])
+                  [grid-size (max 6 (add1 (apply max (flatten knots))))]
+                  [grid (make-vector grid-size (make-vector grid-size "."))])
+             (display-grid grid o o-mode (λ (p v)
+                                            (let ([knot-pos (index-of knots p)])
+                                              (cond
+                                                [(equal? knot-pos 0) "H"]
+                                                [(not (eq? #f knot-pos)) (number->string knot-pos)]
+                                                [else "."]))))))])
 
 (define s0 '(0 . 0))
 (define short-rope (rope `(,s0 ,s0) `(,s0)))

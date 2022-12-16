@@ -26,7 +26,7 @@
           (zip a b)))
 
 (define (packets-ordered? a b)
-  (call/cc (λ (return) (packets-ordered-p? a b return))))
+  (let/ec return (packets-ordered-p? a b return)))
 
 (define (q12-part1 packets)
   (apply + (map add1 (indexes-where packets (λ (p) (packets-ordered? (car p) (cdr p)))))))
