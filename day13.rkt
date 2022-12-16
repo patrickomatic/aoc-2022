@@ -3,11 +3,8 @@
 (require advent-of-code)
 (require "shared.rkt")
 
-(struct packet (a b))
-
 (define (load-packets input)
-  (map (λ (split) 
-          (packet (string->jsexpr (first split)) (string->jsexpr (second split))))
+  (map (λ (l) (cons (string->jsexpr (first l)) (string->jsexpr (second l))))
        (map string-split (string-split input "\n\n"))))
 
 (define (zip ax bx)
@@ -18,25 +15,31 @@
     (for/list ([a (pad-list ax-list)] [b (pad-list bx-list)])
               (cons a b))))
 
-(define (packets-ordered-p? p return)
-  (andmap (λ (ab)
-             (match ab
+(define (packets-ordered-p? a b return)
+  (andmap (λ (p)
+             (match p
                     [(cons (? false?) b) (return #t)]
                     [(cons a (? false?)) (return #f)]
                     [(cons (? number? a) (? number? b)) #:when (< a b) (return #t)]
                     [(cons (? number? a) (? number? b)) (= a b)]
-                    [(cons a b) (packets-ordered-p? (packet a b) return)]))
-          (zip (packet-a p) (packet-b p))))
+                    [(cons a b) (packets-ordered-p? a b return)]))
+          (zip a b)))
 
-(define (packets-ordered? p)
-  (call/cc (λ (return) (packets-ordered-p? p return))))
+(define (packets-ordered? a b)
+  (call/cc (λ (return) (packets-ordered-p? a b return))))
 
-(define (q12 packets)
-  (apply + (map add1 (indexes-where packets packets-ordered?))))
+(define (q12-part1 packets)
+  (apply + (map add1 (indexes-where packets (λ (p) (packets-ordered? (car p) (cdr p)))))))
+
+(define (q12-part2 packets)
+  (let* ([unpaired-packets (append (map car packets) (map cdr packets) '(((2))) '(((6))))]
+         [sorted (sort unpaired-packets packets-ordered?)])
+    (* (add1 (index-of sorted '((2)))) (add1 (index-of sorted '((6)))))))
 
 (let* ([aoc-session (find-session)]
        [input (fetch-aoc-input aoc-session 2022 13 #:cache #t)]
        [packets (load-packets input)])
-  (printf "Question 13/Part 1: ~s\n" (q12 packets)))
+  (printf "Question 13/Part 1: ~s\n" (q12-part1 packets))
+  (printf "Question 13/Part 2: ~s\n" (q12-part2 packets)))
 
-(provide packet packets-ordered?)
+(provide packets-ordered?)
