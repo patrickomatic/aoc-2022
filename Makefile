@@ -6,6 +6,10 @@ all: $(DAYS)
 	raco test $@-test.rkt
 	raco exe $@.rkt
 
+.PHONY: shared
+shared:
+	raco test shared-test.rkt
+
 test: test.rkt
 	raco exe test.rkt && ./test
 

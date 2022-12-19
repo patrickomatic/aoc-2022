@@ -8,11 +8,12 @@
 (define-type Grid-Coord Nonnegative-Integer)
 (define-type Grid-Point (Pairof Grid-Coord Grid-Coord))
 
+(define-type (Immutable-Gridof A) (Vectorof (Vectorof A)))
 (define-type (Gridof A) (Mutable-Vectorof (Mutable-Vectorof A)))
 
 (: make-grid (All (A) (-> Nonnegative-Integer A (Gridof A))))
 (define (make-grid size v)
-  (make-vector size (make-vector size v)))
+  (build-vector size (λ (row) (make-vector size v))))
 
 (: grid-width (All (A) (-> (Gridof A) Nonnegative-Integer)))
 (define (grid-width grid)
@@ -41,14 +42,30 @@
 
 (: grid-set! (All (A) (-> (Gridof A) Grid-Point A Void)))
 (define (grid-set! grid p v)
-  (vector-set! (vector-ref grid (cdr p)) (car p) v))
+  (let ([row (vector-ref grid (cdr p))])
+    (vector-set! row (car p) v)))
+
+(: sub-grid (All (A) (-> (Gridof A) Grid-Point Integer Integer (Gridof A))))
+(define (sub-grid grid origin width height)
+  (let ([x0 (car origin)] [y0 (cdr origin)])
+    (build-vector height (λ ([y : Nonnegative-Integer]) 
+                            (build-vector width (λ ([x : Nonnegative-Integer]) 
+                                                   (grid-ref grid (cons (+ x0 x) (+ y0 y)))))))))
+
+(: grid->mutable-grid (All (A) (-> (Immutable-Gridof A) (Gridof A))))
+(define (grid->mutable-grid grid)
+  (build-vector (vector-length grid) 
+                (λ ([y : Integer])
+                   (vector-copy (vector-ref grid y)))))
 
 (provide Gridof
          Grid-Point 
          display-grid 
+         grid->mutable-grid
          grid-height
          grid-width
          grid-ref
          grid-set!
          make-grid
-         string->real)
+         string->real
+         sub-grid)
