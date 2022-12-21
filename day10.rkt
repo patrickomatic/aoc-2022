@@ -1,7 +1,6 @@
 #lang racket
-
 (require advent-of-code)
-(require "shared.rkt")
+(require "shared/number.rkt")
 
 (define (load-instructions input)
   (map (λ (line)

@@ -1,5 +1,5 @@
 #lang racket
-(require rackunit "day14.rkt" "shared.rkt")
+(require rackunit "day14.rkt" "shared/grid.rkt")
 
 (define test-scans '(((498 . 4) (498 . 6) (496 . 6)) 
                      ((503 . 4) (502 . 4) (502 . 9) (494 . 9))))

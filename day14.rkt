@@ -1,6 +1,6 @@
 #lang racket
 (require advent-of-code)
-(require "shared.rkt")
+(require "shared/number.rkt" "shared/grid.rkt")
 
 (define rock "▩")
 (define sand ".")
@@ -36,10 +36,10 @@
          [draw! (curry draw-point! cave char)])
     (for ([d (range (add1 distance))])
          (cond 
-           [(< ay by) (draw! (cons ax (+ ay d)))]
-           [(> ay by) (draw! (cons ax (- ay d)))]
-           [(> ax bx) (draw! (cons (- ax d) ay))]
-           [(< ax bx) (draw! (cons (+ ax d) ay))]))
+           [(ay . < . by) (draw! (cons ax (+ ay d)))]
+           [(ay . > . by) (draw! (cons ax (- ay d)))]
+           [(ax . > . bx) (draw! (cons (- ax d) ay))]
+           [(ax . < . bx) (draw! (cons (+ ax d) ay))]))
     cave))
 
 (define (draw-point! c char p)

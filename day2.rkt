@@ -56,10 +56,6 @@
     ['Paper 2]
     ['Scissors 3]))
 
-;(: score-for-round (-> Choice Choice Integer))
-;(define (score-for-round me them)
-;  (+ (score-for-win me them) (score-for-choice me)))
-
 (: load-strategies (-> String (Listof strategy)))
 (define (load-strategies filename)
   (map (λ ([s : (Listof String)])

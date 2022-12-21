@@ -1,6 +1,6 @@
 #lang racket
 (require advent-of-code)
-(require "shared.rkt")
+(require "shared/number.rkt" "shared/grid.rkt")
 
 (struct rope (knots tail-path)
         #:transparent

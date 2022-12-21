@@ -1,6 +1,6 @@
 #lang racket
 (require advent-of-code)
-(require "shared.rkt")
+(require "shared/grid.rkt")
 
 (define start-marker #\S)
 (define end-marker #\E)

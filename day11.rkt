@@ -1,7 +1,6 @@
 #lang racket
-
 (require advent-of-code)
-(require "shared.rkt")
+(require "shared/number.rkt")
 
 (struct monkey
         (id items operation test throw-to-if-true throw-to-if-false inspect-count)

@@ -1,7 +1,7 @@
 #lang racket
 (require json)
 (require advent-of-code)
-(require "shared.rkt")
+(require "shared/number.rkt")
 
 (define (load-packets input)
   (map (λ (l) (cons (string->jsexpr (first l)) (string->jsexpr (second l))))

@@ -1,5 +1,5 @@
 #lang racket
-(require "shared.rkt")
+(require "shared/number.rkt")
 
 (struct command (amount from to))
 

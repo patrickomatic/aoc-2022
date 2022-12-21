@@ -1,6 +1,6 @@
 #lang racket
 (require advent-of-code)
-(require "shared.rkt")
+(require "shared/number.rkt" "shared/grid.rkt")
 
 (define (load-grid input)
   ((compose

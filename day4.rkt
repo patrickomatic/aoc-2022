@@ -1,19 +1,15 @@
 #lang typed/racket
+(require "shared/number.rkt")
 
 (define-type Range (Pairof Real Real))
 (define-type RangePair (Pairof Range Range))
-
-(: parse-integer (-> String Real))
-(define (parse-integer s)
-  (let ([p (string->number s)])
-    (if p (real-part p) (error "Invalid number in input" s))))
 
 (define-syntax-rule (mpair fn l)
   (cons (fn (first l)) (fn (second l))))
 
 (: parse-range (-> String Range))
 (define (parse-range r)
-  (mpair parse-integer (string-split r "-")))
+  (mpair string->real (string-split r "-")))
 
 (: load-range-pairs (-> String (Listof RangePair)))
 (define (load-range-pairs filename)
