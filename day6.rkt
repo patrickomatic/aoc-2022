@@ -1,4 +1,5 @@
 #lang typed/racket
+(require "shared/aoc.rkt")
 
 (: all-different? (All (A) (-> (Listof A) Boolean)))
 (define (all-different? xs)
@@ -16,13 +17,11 @@
       [else 
         (find-marker datastream marker-length next-window (+ 1 char-count))])))
 
-(: q6 (-> String Integer Real))
-(define (q6 input marker-length)
-  (or (find-marker (open-input-file input) marker-length)
+(: q6 (-> Integer String Real))
+(define (q6 marker-length input)
+  (or (find-marker (open-input-string input) marker-length)
       (error "Could not find marker")))
 
-(let* ([input "input/day6.txt"])
-  (printf "Question 6/Part 1: ~s\n" (q6 input 4))
-  (printf "Question 6/Part 2: ~s\n" (q6 input 14)))
+(display-advent-of-code-for-day 2022 6 (curry q6 4) (curry q6 14))
 
 (provide all-different? find-marker)

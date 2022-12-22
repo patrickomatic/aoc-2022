@@ -1,5 +1,5 @@
 #lang racket
-(require "shared/number.rkt")
+(require "shared/aoc.rkt" "shared/number.rkt")
 
 (struct command (amount from to))
 
@@ -46,15 +46,15 @@
                 (for/list ([i (range amount)]) (move-crates! stacks from to 1))
                 (move-crates! stacks from to amount)))))
 
-(define (q5 stacks commands strategy)
-  (begin
+(define (q5 strategy input)
+  (let* ([lines (string-split input "\n")]
+         [commands (parse-commands lines)]
+         [stacks (parse-stacks lines)])
     (run-commands! stacks commands strategy)
     (string-join (vector->list (vector-map last (vector-filter-not empty? stacks))) "")))
 
-(let* ([filename "input/day5.txt"]
-       [lines (file->lines filename)]
-       [commands (parse-commands lines)])
-  (printf "Question 5/Part 1: ~s\n" (q5 (parse-stacks lines) commands 'one-at-a-time))
-  (printf "Question 5/Part 2: ~s\n" (q5 (parse-stacks lines) commands 'multiple)))
+(display-advent-of-code-for-day 2022 5 
+                                (curry q5 'one-at-a-time)
+                                (curry q5 'multiple))
 
 (provide command parse-commands)

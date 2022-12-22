@@ -1,6 +1,5 @@
 #lang racket
-(require advent-of-code)
-(require "shared/grid.rkt")
+(require "shared/aoc.rkt" "shared/grid.rkt")
 
 (define start-marker #\S)
 (define end-marker #\E)
@@ -33,11 +32,11 @@
     #f
     (or (find-marker-in-row m (vector-ref elevations y) y)
         (find-marker elevations m (add1 y)))))
- 
+
 (define (load-heightmap input)
   (let ([elevations (list->vector
-                     (map (compose list->vector string->list)
-                          (string-split input "\n")))])
+                      (map (compose list->vector string->list)
+                           (string-split input "\n")))])
     (heightmap 
       (find-marker elevations start-marker)
       (find-marker elevations end-marker)
@@ -105,17 +104,15 @@
          [all-searches (filter identity (map (curry bfs h) all-low-points))])
     (first (sort (map heightmap-shortest-path all-searches) < #:key length))))
 
-(let* ([aoc-session (find-session)]
-       [input (fetch-aoc-input aoc-session 2022 12 #:cache #t)]
-       [h (load-heightmap input)])
-  (printf "## Question 12\n~s\n" h)
-
-  (let ([from-start (q12-part1 h)])
-    (display from-start)
-    (printf "Question 12/Part 1: ~s\n" (- (length (heightmap-shortest-path from-start)) 3)))
-
-  (let ([from-low-point (q12-part2 h)])
-    (printf "Question 12/Part 2: ~s\n" (- (length from-low-point) 3))))
+(display-advent-of-code-for-day 2022 12 
+                                (λ (input)
+                                   (let* ([h (load-heightmap input)]
+                                          [from-start (q12-part1 h)])
+                                     (- (length (heightmap-shortest-path from-start)) 3)))
+                                (λ (input)
+                                   (let* ([h (load-heightmap input)]
+                                          [from-low-point (q12-part2 h)])
+                                     (- (length from-low-point) 3))))
 
 (provide bfs
          can-handle-elevation-change? 

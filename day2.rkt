@@ -1,4 +1,5 @@
 #lang typed/racket
+(require "shared/aoc.rkt")
 
 (define-type Choice (U 'Rock 'Paper 'Scissors))
 (define-type Outcome (U 'Win 'Lose 'Draw))
@@ -57,14 +58,14 @@
     ['Scissors 3]))
 
 (: load-strategies (-> String (Listof strategy)))
-(define (load-strategies filename)
+(define (load-strategies input)
   (map (λ ([s : (Listof String)])
           (strategy 
             (string->choice (first s))
             (string->choice (second s))
             (string->outcome (second s))))
        (map string-split 
-            (file->lines filename))))
+            (string-split input "\n"))))
 
 (: needed-to-win (-> Choice Choice))
 (define (needed-to-win them)
@@ -92,28 +93,26 @@
            ('Win (needed-to-win them))
            ('Lose (needed-to-lose them)))))
 
-(: q2-part1 (-> (Listof strategy) Real))
-(define (q2-part1 strategies)
+(: q2-part1 (-> String Real))
+(define (q2-part1 input)
   (apply +
          (map
            (λ ([strat : strategy])
             (let ([them (strategy-them strat)]
                   [me (strategy-me strat)])
               (+ (score-for-win me them) (score-for-choice me))))
-         strategies)))
+         (load-strategies input))))
   
-(: q2-part2 (-> (Listof strategy) Real))
-(define (q2-part2 strategies)
+(: q2-part2 (-> String Real))
+(define (q2-part2 input)
   (apply +
          (map
            (λ ([strat : strategy])
             (let ([them (strategy-them strat)]
                   [me (choice-for-desired-outcome strat)])
               (+ (score-for-win me them) (score-for-choice me))))
-         strategies)))
+         (load-strategies input))))
 
-(let ([strategies (load-strategies "input/day2.txt" )])
-  (printf "Question 2/Part 1: ~a\n" (q2-part1 strategies))
-  (printf "Question 2/Part 2: ~a\n" (q2-part2 strategies)))
+(display-advent-of-code-for-day 2022 2 q2-part1 q2-part2)
 
 (provide score-for-choice)

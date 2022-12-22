@@ -1,8 +1,7 @@
 #lang racket
-(require "shared/number.rkt")
+(require "shared/aoc.rkt" "shared/number.rkt")
 
 (struct command (name argument output) #:transparent)
-
 (struct file (path size directory?) #:transparent)
 
 (define command-regexp (const #px"^\\$\\s+(\\w+)\\s?(.+)?$"))
@@ -74,8 +73,8 @@
                        (error "Unsupported command" (command-name current-command))]))
     known-paths))
 
-(define (q7 filename strategy)
-  (let* ([commands (parse-terminal-history (open-input-file filename))]
+(define (q7 strategy input)
+  (let* ([commands (parse-terminal-history (open-input-string input))]
          [known-paths (collect-known-paths commands)]
          [space-left (- 70000000 (hash-ref known-paths "/"))]
          [space-needed (- 30000000 space-left)])
@@ -83,9 +82,7 @@
       (apply + (filter (curry >= 100000) (hash-values known-paths)))
       (car (sort (filter (curry < space-needed) (hash-values known-paths)) <)))))
 
-(let* ([filename "input/day7.txt"])
-  (printf "Question 7/Part 1: ~s\n" (q7 filename 'part1))
-  (printf "Question 7/Part 2: ~s\n" (q7 filename 'part2)))
+(display-advent-of-code-for-day 2022 7 (curry q7 'part1) (curry q7 'part2))
 
 (provide change-directory 
          collect-known-paths

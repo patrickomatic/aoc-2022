@@ -1,6 +1,7 @@
 #lang racket
-(require advent-of-code)
-(require "shared/number.rkt" "shared/grid.rkt")
+(require "shared/aoc.rkt"
+         "shared/number.rkt"
+         "shared/grid.rkt")
 
 (define rock "▩")
 (define sand ".")
@@ -121,19 +122,19 @@
 (define (sand-resting-after-animation cave)
   ((compose length cave-sand-at-rest animate-sand) cave))
 
-(let* ([aoc-session (find-session)]
-       [input (fetch-aoc-input aoc-session 2022 14 #:cache #t)]
-       [scans (load-scans input)]
-       [max-scan-y (apply max (flatten (map (λ (p) (map cdr p)) scans)))]
-       [floor-y (+ 2 max-scan-y)])
-  (printf "Question 14/Part 1: ~s\n" 
-          (sand-resting-after-animation (make-cave scans 
-                                                   #:vp (viewport '(450 . 0) 59 170)
-                                                   #:drop-sand-from '(500 . 0))))
-  (printf "Question 14/Part 2: ~s\n" 
-          (add1 (sand-resting-after-animation (make-cave scans 
-                                                         #:vp (viewport '(450 . 0) 59 172)
-                                                         #:drop-sand-from '(500 . 0)
-                                                         #:floor-y floor-y)))))
+(define (q14 strategy input)
+  (let* ([scans (load-scans input)]
+         [max-scan-y (apply max (flatten (map (λ (p) (map cdr p)) scans)))]
+         [floor-y (+ 2 max-scan-y)])
+  (if (eq? strategy 'part1)
+    (sand-resting-after-animation (make-cave scans 
+                                             #:vp (viewport '(450 . 0) 59 170)
+                                             #:drop-sand-from '(500 . 0)))
+    (add1 (sand-resting-after-animation (make-cave scans 
+                                                   #:vp (viewport '(450 . 0) 59 172)
+                                                   #:drop-sand-from '(500 . 0)
+                                                   #:floor-y floor-y))))))
+
+(display-advent-of-code-for-day 2022 14 (curry q14 'part1) (curry q14 'part2))
 
 (provide animate-sand cave darkness draw-line! make-cave rock sand viewport)

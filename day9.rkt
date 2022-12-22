@@ -1,6 +1,7 @@
 #lang racket
-(require advent-of-code)
-(require "shared/number.rkt" "shared/grid.rkt")
+(require "shared/aoc.rkt" 
+         "shared/number.rkt"
+         "shared/grid.rkt")
 
 (struct rope (knots tail-path)
         #:transparent
@@ -22,7 +23,6 @@
 (define l0 '(20 . 20))
 (define long-rope (rope `(,l0 ,l0 ,l0 ,l0 ,l0 ,l0 ,l0 ,l0 ,l0 ,l0) `(,l0)))
 
-; (: load-motions (-> String Motions))
 (define (load-motions input)
   (map (λ (row)
           (let ([split-row (string-split row)])
@@ -74,7 +74,6 @@
                    direction
                    (sub1 amount))))
 
-; (: run-motions (->* (Motions) (Coordinate Coordinate (Listof Coordinate)) rope))
 (define (run-motions motions r)
   (if (null? motions)
     r
@@ -83,17 +82,12 @@
            [amount (cdr motion)])
       (run-motions (cdr motions) (repeat-motion r direction amount)))))
  
-; (: q9 (-> String (Listof Motion) Real))
-(define (q9 motions r)
+(define (q9 r input)
   (length
     (remove-duplicates
       (rope-tail-path
-        (run-motions motions r)))))
+        (run-motions (load-motions input) r)))))
 
-(let* ([aoc-session (find-session)]
-       [input (fetch-aoc-input aoc-session 2022 9 #:cache #t)]
-       [motions (load-motions input)])
-  (printf "Question 9/Part 1: ~s\n" (q9 motions short-rope))
-  (printf "Question 9/Part 2: ~s\n" (q9 motions long-rope)))
+(display-advent-of-code-for-day 2022 9 (curry q9 short-rope) (curry q9 long-rope))
 
 (provide move-knots rope run-motions points-adjacent? short-rope long-rope)

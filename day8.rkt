@@ -1,6 +1,7 @@
 #lang racket
-(require advent-of-code)
-(require "shared/number.rkt" "shared/grid.rkt")
+(require "shared/aoc.rkt" 
+         "shared/number.rkt" 
+         "shared/grid.rkt")
 
 (define (load-grid input)
   ((compose
@@ -14,8 +15,8 @@
 (define (tree-height grid x y)
   (vector-ref (vector-ref grid y) x))
 
+;; TODO use the shared ones
 (define (grid-width grid) (vector-length (vector-ref grid 0)))
-
 (define (grid-height grid) (vector-length grid))
 
 (define (look-out-boolean grid x y height 
@@ -73,15 +74,12 @@
                         (set! scenic-scores (cons (scenic-score grid x y) scenic-scores))))
     scenic-scores))
 
-(define (q8 grid part)
-  (if (eq? part 'part1)
-    (length (get-visible-trees grid))
-    (apply max (get-scenic-scores grid))))
+(define (q8 part input)
+  (let ([grid (load-grid input)])
+    (if (eq? part 'part1)
+      (length (get-visible-trees grid))
+      (apply max (get-scenic-scores grid)))))
 
-(let* ([aoc-session (find-session)]
-       [input (fetch-aoc-input aoc-session 2022 8 #:cache #t)]
-       [grid (load-grid input)])
-  (printf "Question 8/Part 1: ~s\n" (q8 grid 'part1))
-  (printf "Question 8/Part 2: ~s\n" (q8 grid 'part2)))
+(display-advent-of-code-for-day 2022 8 (curry q8 'part1) (curry q8 'part2))
 
 (provide get-visible-trees tree-height)

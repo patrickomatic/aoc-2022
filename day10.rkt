@@ -1,6 +1,5 @@
 #lang racket
-(require advent-of-code)
-(require "shared/number.rkt")
+(require "shared/aoc.rkt" "shared/number.rkt")
 
 (define (load-instructions input)
   (map (λ (line)
@@ -48,10 +47,10 @@
     (display "\n")
     samples))
 
-(let* ([aoc-session (find-session)]
-       [input (fetch-aoc-input aoc-session 2022 10 #:cache #t)]
-       [instructions (load-instructions input)])
-  (printf "Question 10/ Part 1: ~s\n" 
-          (apply + (run-cpu! instructions '(20 60 100 140 180 220)))))
+(define (q10-part1 input)
+  (apply + (run-cpu! (load-instructions input) '(20 60 100 140 180 220))))
+
+; TODO print the p1 answer
+(display-advent-of-code-for-day 2022 10 q10-part1 q10-part1)
 
 (provide fill-pipeline run-cpu! sprite-overlaps-row-index?)

@@ -1,21 +1,21 @@
 #lang typed/racket
-(require "shared/number.rkt")
+(require "shared/aoc.rkt" "shared/number.rkt")
 
 (define-type Range (Pairof Real Real))
 (define-type RangePair (Pairof Range Range))
 
 (define-syntax-rule (mpair fn l)
-  (cons (fn (first l)) (fn (second l))))
+  `(,(fn (first l)) . ,(fn (second l))))
 
 (: parse-range (-> String Range))
 (define (parse-range r)
   (mpair string->real (string-split r "-")))
 
 (: load-range-pairs (-> String (Listof RangePair)))
-(define (load-range-pairs filename)
+(define (load-range-pairs input)
   (map (λ ([line : String])
           (mpair parse-range (string-split line ",")))
-       (file->lines filename)))
+       (string-split input "\n")))
 
 (: partially-overlapping? (-> RangePair Boolean))
 (define (partially-overlapping? range-pair) 
@@ -36,16 +36,14 @@
 
 (define fully-overlapping? ((curry either-way) fully-overlaps?))
 
-(: q4-part1 (-> (Listof RangePair) Real))
-(define (q4-part1 range-pairs)
-  (length (filter fully-overlapping? range-pairs)))
+(: q4-part1 (-> String Real))
+(define (q4-part1 input)
+  (length (filter fully-overlapping? (load-range-pairs input))))
 
-(: q4-part2 (-> (Listof RangePair) Real))
-(define (q4-part2 range-pairs)
-  (length (filter partially-overlapping? range-pairs)))
+(: q4-part2 (-> String Real))
+(define (q4-part2 input)
+  (length (filter partially-overlapping? (load-range-pairs input))))
 
-(let ([range-pairs (load-range-pairs "input/day4.txt")])
-  (printf "Question 4/Part 1: ~a\n" (q4-part1 range-pairs))
-  (printf "Question 4/Part 2: ~a\n" (q4-part2 range-pairs)))
+(display-advent-of-code-for-day 2022 4 q4-part1 q4-part2)
 
 (provide fully-overlapping? partially-overlapping?)

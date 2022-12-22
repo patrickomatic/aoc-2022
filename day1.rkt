@@ -1,11 +1,11 @@
 #lang typed/racket
+(require "shared/aoc.rkt")
 
 (define-type Calories Real)
-
 (define-type ParsedEntry (U Calories 'Separator))
 
 (: group-calories (-> (Listof ParsedEntry) (Listof Calories)))
-(define (group-calories [entries : (Listof ParsedEntry)])
+(define (group-calories entries)
   (foldr
    (λ ([v : ParsedEntry] [current : (Listof Calories)])
      (if (eq? v 'Separator)
@@ -26,24 +26,15 @@
 
 (: rank-calories (-> (Listof String) (Listof Real)))
 (define (rank-calories lines)
-  (sort
-    (group-calories (parse-input lines)) 
-    >))
+  (sort (group-calories (parse-input lines)) >))
 
-(: q1-part1 (-> (Listof String) Calories))
-(define (q1-part1 [lines : (Listof String)])
-  (first (rank-calories lines)))
+(: q1-part1 (-> String Calories))
+(define (q1-part1 lines)
+  (first (rank-calories (string-split lines "\n"))))
    
-(: q1-part2 (-> (Listof String) Calories))
-(define (q1-part2 [lines : (Listof String)])
-   (apply
-    +
-    (take
-     (rank-calories lines)
-     3)))
+(: q1-part2 (-> String Calories))
+(define (q1-part2 lines)
+   (apply + (take (rank-calories (string-split lines "\n")) 3)))
 
-(q1-part1 (file->lines "input/day1.txt"))
-(q1-part2 (file->lines "input/day1.txt"))
-
+(display-advent-of-code-for-day 2022 1 q1-part1 q1-part2)
 (provide group-calories parse-input rank-calories)
-

@@ -1,6 +1,5 @@
 #lang racket
-(require advent-of-code)
-(require "shared/number.rkt")
+(require "shared/aoc.rkt" "shared/number.rkt")
 
 (struct monkey
         (id items operation test throw-to-if-true throw-to-if-false inspect-count)
@@ -80,21 +79,22 @@
                 (sub1 rounds)
                 relief-fn)))
 
-(define (q11 monkeys rounds relief-fn)
-  (apply * 
-         (map monkey-inspect-count 
-              (take 
-                (sort 
-                  (take-turns monkeys rounds relief-fn) 
-                  > 
-                  #:key monkey-inspect-count) 
-                2))))
+(define (q11 rounds relief-fn input)
+  (let* ([monkeys (load-monkeys input)])
+    (apply * 
+           (map monkey-inspect-count 
+                (take 
+                  (sort 
+                    (take-turns monkeys rounds relief-fn) 
+                    > 
+                    #:key monkey-inspect-count) 
+                  2)))))
 
-(let* ([aoc-session (find-session)]
-       [input (fetch-aoc-input aoc-session 2022 11 #:cache #t)]
-       [monkeys (load-monkeys input)]
-       [common-divisor (apply * (map monkey-test monkeys))])
-  (printf "Question 11/Part 1: ~s\n" (q11 monkeys 20 relieved))
-  (printf "Question 11/Part 2: ~s\n" (q11 monkeys 10000 (curry relieved-v2 common-divisor))))
+(display-advent-of-code-for-day 2022 11 
+                                (curry q11 20 relieved)
+                                (λ (input)
+                                   (q11 
+                                     10000 
+                                     (curry relieved-v2 (apply * (map monkey-test (load-monkeys input)))) input)))
 
 (provide inspect-and-throw-items load-monkeys monkey monkey-test? relieved take-turns throw-to-monkey)

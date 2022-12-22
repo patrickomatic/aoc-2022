@@ -8,8 +8,8 @@ SHARED_LIBS := $(NUMBER_LIB) $(GRID_LIB) $(SPARSE_MATRIX_LIB)
 
 RACKET_PACKAGE_DEPS := advent-of-code memo
 
-#all: $(DAYS)
-all: day16
+all: $(DAYS)
+#all: day16
 
 shared/compiled/geometry_rkt.zo: shared/geometry.rkt shared/geometry-test.rkt
 	raco test shared/geometry-test.rkt
